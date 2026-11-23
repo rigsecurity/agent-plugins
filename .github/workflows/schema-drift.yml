@@ -1,0 +1,28 @@
+name: Cursor schema drift
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    name: Compare vendored schema with upstream
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Diff against cursor/plugins
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/cursor/plugins/main/schemas/plugin.schema.json -o upstream.schema.json
+          if ! diff -u schemas/cursor-plugin.schema.json upstream.schema.json; then
+            echo "::error::schemas/cursor-plugin.schema.json differs from cursor/plugins main. Review the change, update the vendored copy and re-run validation."
+            exit 1
+          fi

@@ -1,0 +1,38 @@
+{
+  "name": "rig-security",
+  "displayName": "Rig Security",
+  "version": "0.1.0",
+  "minClientVersions": {
+    "cursor": "3.13.0"
+  },
+  "description": "Ask Rig Security how every identity reaches your systems: humans, non-human identities and AI agents, their access paths, posture findings and threat detections. Read-only, hosted, OAuth sign-in, nothing to run locally",
+  "author": {
+    "name": "Rig Security",
+    "email": "support@rig.security"
+  },
+  "homepage": "https://rig.security",
+  "repository": "https://github.com/rigsecurity/agent-plugins",
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "keywords": [
+    "rig",
+    "security",
+    "identity",
+    "itdr",
+    "identity-threat-detection",
+    "access-graph",
+    "posture",
+    "threat-detection",
+    "ai-agents",
+    "non-human-identities",
+    "compliance",
+    "mcp"
+  ],
+  "category": "integrations",
+  "tags": [
+    "security",
+    "identity",
+    "mcp"
+  ],
+  "mcpServers": "./mcp.json"
+}
