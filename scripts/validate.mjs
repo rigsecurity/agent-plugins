@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
+import { parse as parseYaml } from "yaml";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const errors = [];
@@ -59,6 +60,7 @@ function validatePaths() {
   const checks = [
     [".cursor-plugin/plugin.json", "logo", cursorManifest.logo],
     [".cursor-plugin/plugin.json", "mcpServers", cursorManifest.mcpServers],
+    [".cursor-plugin/plugin.json", "skills", cursorManifest.skills],
     [".claude-plugin/plugin.json", "mcpServers", claudeManifest.mcpServers],
   ];
   for (const [file, field, value] of checks) {
@@ -156,6 +158,39 @@ function validateReadme(mcp) {
   }
 }
 
+function validateSkills() {
+  const skillsDir = path.join(root, "skills");
+  const dirs = existsSync(skillsDir) ? readdirSync(skillsDir, { withFileTypes: true }).filter((entry) => entry.isDirectory()) : [];
+  if (dirs.length === 0) {
+    fail("skills/ must contain at least one skill directory");
+  }
+  for (const dir of dirs) {
+    const file = `skills/${dir.name}/SKILL.md`;
+    if (!existsSync(path.join(root, file))) {
+      fail(`${file} is missing`);
+      continue;
+    }
+    const frontmatter = read(file).match(/^---\n([\s\S]*?)\n---\n/);
+    if (!frontmatter) {
+      fail(`${file} must start with a --- frontmatter block`);
+      continue;
+    }
+    let meta;
+    try {
+      meta = parseYaml(frontmatter[1]);
+    } catch (err) {
+      fail(`${file} frontmatter is not valid YAML: ${err.message}`);
+      continue;
+    }
+    if (meta?.name !== dir.name) {
+      fail(`${file} frontmatter "name" must be "${dir.name}", got ${JSON.stringify(meta?.name)}`);
+    }
+    if (typeof meta?.description !== "string" || meta.description.trim() === "") {
+      fail(`${file} frontmatter must have a non-empty "description"`);
+    }
+  }
+}
+
 function validateChangelog() {
   if (!new RegExp(`^## ${cursorManifest.version.replaceAll(".", "\\.")}$`, "m").test(changelog)) {
     fail(`CHANGELOG.md has no "## ${cursorManifest.version}" section`);
@@ -167,6 +202,7 @@ validateLockstep();
 validatePaths();
 const mcp = validateMcpServer();
 validateLogo();
+validateSkills();
 if (mcp) {
   validateReadme(mcp);
 }

@@ -151,6 +151,19 @@ Example prompts:
 - "Show the detection findings for jane@example.com from the last 7 days."
 - "Which connectors are failing to sync?"
 
+## Skills
+
+The plugin ships four skills. Each one tells the agent which `rig` tools to call, in what order, how to page through results and what to report back. Your agent picks a skill when your question matches it, or you can name it.
+
+| Skill | Use it to |
+|---|---|
+| `triage-finding` | Explain a posture finding or threat detection: what it is, what it affects, why it matters and how to fix it. |
+| `identity-blast-radius` | Map what a person, service account, API key or token can reach, flag risky access and list related findings and detections. |
+| `ai-agent-inventory` | List AI agents, MCP servers and AI apps, who uses them, which tools they expose, and which ones are ungoverned or risky. |
+| `who-can-access` | List the identities that can reach a resource and explain the groups, roles and permissions that grant the access. |
+
+Skills use only the read-only tools above, so they report and recommend but never change anything. They load with the plugin install (Cursor marketplace, `/plugin install` in Claude Code, `codex plugin add`). Adding only the MCP server gives you the tools without the skills.
+
 ## Security and privacy
 
 - **Read-only.** The server exposes no tools that change data in Rig.
