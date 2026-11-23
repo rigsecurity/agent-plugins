@@ -1,6 +1,6 @@
 {
   "name": "rig-security",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Ask Rig Security how every identity reaches your systems: humans, non-human identities and AI agents, their access paths, posture findings and threat detections. Read-only, hosted, OAuth sign-in, nothing to run locally",
   "author": {
     "name": "Rig Security",
